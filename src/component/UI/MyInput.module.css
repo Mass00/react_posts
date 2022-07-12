@@ -1,0 +1,6 @@
+.default {
+    border: 1px solid teal;
+}
+.error {
+    border: 1px solid red;
+}

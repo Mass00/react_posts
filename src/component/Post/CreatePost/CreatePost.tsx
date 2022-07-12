@@ -9,24 +9,37 @@ interface IPostInputForm {
 
 export const CreatePost:React.FC<IPostInputForm> = (props) => {
     const [inputValue, setInputValue] = useState<string>('')
-    const handlerOnChangeGetInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.currentTarget.value)
-    }
+    const [error, setError] = useState<string>('')
+    const handlerOnChangeGetInputValue = (e: React.ChangeEvent<HTMLInputElement>) =>
+            e.currentTarget.value.trim() && setInputValue(e.currentTarget.value.trim())
+
     const handlerOnClickSendPost = () => {
-        props.handlerOnClickAddPost(inputValue, 'Gordon Freeman')
+        if(inputValue) {
+            props.handlerOnClickAddPost(inputValue, 'Gordon Freeman')
+            setInputValue('')
+            setError('')
+        }else {
+            setError('Title is required')
+        }
+
     }
     return (
+        <>
         <div className={st.postInputForm}>
             <MyInput
                 type={'text'}
                 value={inputValue}
-                className={st.postInput}
+                error={error}
+                className={!error ? st.postInput : st.errorInput}
                 onChange={handlerOnChangeGetInputValue}
             />
             <MyButton
                 className={st.postButton}
                 onClick={handlerOnClickSendPost}
             >Отправить</MyButton>
+
         </div>
+            {error ? <div style={{padding: '5px', color: 'red'}}><span>{error}</span></div> : <></>}
+        </>
     );
 };

@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import './App.css';
 import {CreatePost} from "./component/Post/CreatePost/CreatePost";
 import {PostList} from "./component/PostList";
+import {MyModal} from "./component/UI/MyModal";
+import {MyButton} from "./component/UI/MyButton";
+import {MyInput} from "./component/UI/MyInput";
 export type postsTypes = {
     id: number
     text: string
@@ -32,22 +35,43 @@ function App() {
             date: new Date()},
 
     ])
+    const [searchQ, setSearchQ] = useState<string>('')
+    const [active, setActive]= useState<boolean>(false)
+    const filtredPosts = useMemo( () => posts.filter((i) => i.userName.includes(searchQ)),[searchQ, posts])
+    const handlerOnChangeGetSearchQ = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setSearchQ(e.currentTarget.value.trim())
+    const handlerOnClickActiveModal = () => setActive(true)
+    const handlerOnClickDisableModal = () => setActive(false)
     const handlerOnClickAddPost = (text: string, userName: string) => {
         setPosts(prev => [...prev,{id: Date.now(),text, userName, date: new Date()}])
+        setActive(false)
     }
-    const handlerOnClickRemovePost = (id: number) => {
-        setPosts(prev => [...prev].filter(i => i.id !== id))
-    }
+    const handlerOnClickRemovePost = (id: number) => setPosts(prev => [...prev].filter(i => i.id !== id))
     const handlerOnClickSavePost = (id: number, text: string) => {
         console.log(text)
         setPosts(prev => [...prev].map(i => i.id === id ? {...i,text: text} : i))
         console.log(posts)
     }
+
   return (
     <div className="App">
-        <CreatePost handlerOnClickAddPost={handlerOnClickAddPost}/>
+        <div>
+            <MyButton
+                onClick={handlerOnClickActiveModal}
+                className={'Btn'}
+            >Создать пост
+            </MyButton>
+            <MyInput value={searchQ} onChange={handlerOnChangeGetSearchQ}></MyInput>
+        </div>
+        <MyModal
+            active={active}
+            handlerOnClickDisableModal={handlerOnClickDisableModal}
+        >
+            <CreatePost handlerOnClickAddPost={handlerOnClickAddPost}/>
+        </MyModal>
+
         <PostList
-            posts={posts}
+            posts={filtredPosts}
             handlerOnClickRemovePost={handlerOnClickRemovePost}
             handlerOnClickSavePost={handlerOnClickSavePost}
         />
