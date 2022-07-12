@@ -1,0 +1,17 @@
+.postHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Btn {
+    margin: 5px;
+    padding: 5px;
+    min-width: 50px;
+    min-height: 20px;
+    border: 1px solid teal;
+    cursor: pointer;
+}
+
+.userName {
+    font-weight: bold;
+}
